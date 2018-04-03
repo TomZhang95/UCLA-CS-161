@@ -1,0 +1,169 @@
+;;;Tianyang Zhang;;;
+;;;404-743-024;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+1. 
+a). {x/A, y/B, z/B}
+b). Cannot unify
+c). {x/B, y/A}
+d). {x/John, y/John}
+e). Cannot unify
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+2. (25 pts) Consider the following sentences:
+• John likes all kinds of food.
+• Apples are food.
+• Chicken is food.
+• Anything anyone eats and isn’t killed by is food.
+• If you are killed by something, you are not alive.
+• Bill eats peanuts and is still alive. *
+• Sue eats everything Bill eats.
+
+;-------------------------------------- (a) ------------------------------------------;
+(a) Translate these sentences into formulas in first-order logic.
+• John likes all kinds of food.
+(A x)(Food(x) => Likes(John, x))
+
+• Apples are food.
+Food(apples)
+
+• Chicken is food.
+Food(chicken)
+
+• Anything anyone eats and isn’t killed by is food.
+(A x, y)((Eats(x, y) & ~Killed(y, x)) => Food(x))
+
+• If you are killed by something, you are not alive.
+(A x)((E y) (Killed(y, x) => ~Alive(x)))
+
+• Bill eats peanuts and is still alive. *
+(Eats(Bill, peanuts) & Alive(Bill))
+
+• Sue eats everything Bill eats.
+(A x)(Eats(Bill, x) => Eats(Sue, x))
+
+
+;-------------------------------------- (b) ------------------------------------------;
+(b) Convert the formulas of part (a) into CNF (also called clausal form).
+• John likes all kinds of food:
+~Food(x) | Likes(John, x)
+
+• Apples are food:
+Food(apples)
+
+• Chicken is food.
+Food(chicken)
+
+• Anything anyone eats and isn’t killed by is food:
+~Eats(x, y) | Killed(y, x) | Food(y)
+
+• If you are killed by something, you are not alive:
+~Killed(y, x) | ~Alive(x)
+
+• Bill eats peanuts and is still alive:
+Eats(Bill, peanuts)
+Alive(Bill)
+
+• Sue eats everything Bill eats:
+~Eats(Bill, x) | Eats(Sue, x)
+
+
+;-------------------------------------- (c) ------------------------------------------;
+(c) Prove that John likes peanuts using resolution.
+Prove: Likes(John, x)
+KB:
+	1. ~Food(x) | Likes(John, x)
+	2. Food(apples)
+	3. Food(chicken)
+	4. ~Eats(x, y) | Killed(y, x) | Food(y)
+	5. ~Killed(y, x) | ~Alive(x)
+	6. Eats(Bill, peanuts)
+	7. Alive(Bill)
+	8. ~Eats(Bill, x) | Eats(Sue, x)
+
+Alpha:
+	9. ~Likes(John, peanuts)
+resolution:							Derived from:
+	10. ~Killed(y, Bill) 			(5, 7)
+	11. ~Eats(Bill, y) | Food(y) 	(4, 10)
+	12. Food(peanuts) 				(6, 11)
+	13. Likes(John, peanuts)		(1, 12)
+	14. Empty						(9, 13)
+Therefore, John likes peanuts.
+
+
+;-------------------------------------- (d) ------------------------------------------;
+(d) Use resolution to answer the question, “What food does Sue eat?”
+Prove: Eats(Sue, f)
+KB:
+	1. ~Food(x) | Likes(John, x)
+	2. Food(apples)
+	3. Food(chicken)
+	4. ~Eats(x, y) | Killed(y, x) | Food(y)
+	5. ~Killed(y, x) | ~Alive(x)
+	6. Eats(Bill, peanuts)
+	7. Alive(Bill)
+	8. ~Eats(Bill, x) | Eats(Sue, x)
+Alpha:
+	9. ~Eats(Sue, f)
+resolution:						Derived from:
+	10. Eats(Sue, peanuts) 		(6, 8)
+	11. Empty					(9, 10) {f/peanuts}
+Therefore, unifier = {f/peanuts}, Sue eats peanuts.
+
+(e) Use resolution to answer (d) if, instead of the axiom marked with an asterisk
+above, we had:
+• If you don’t eat, you die:
+1st order: (A x, y)(~Eats(y, x) => Die(y))
+CNF: Eats(y, x) | Die(y)
+
+• If you die, you are not alive.
+1st order: (A x)(Die(x) => ~Alive(x))
+CNF: ~Die(x) | ~Alive(x)
+
+• Bill is alive.
+1st order: Alive(Bill)
+CNF: Alive(Bill)
+
+Prove: Eats(Sue, f)
+KB:
+	1. ~Food(x) | Likes(John, x)
+	2. Food(apples)
+	3. Food(chicken)
+	4. ~Eats(x, y) | Killed(y, x) | Food(y)
+	5. ~Killed(y, x) | ~Alive(x)
+	6. Eats(y, x) | Die(y)
+	7. ~Die(x) | ~Alive(x)
+	8. Alive(Bill)
+	9. ~Eats(Bill, x) | Eats(Sue, x)
+Alpha:
+	10. ~Eats(Sue, f)
+resolution:							Derived from:
+	11. Eats(y, x) | ~Alive(y)		(6, 7)
+	12. ~Killed(y, Bill)			(5, 8)
+	13. ~Eats(Bill, y) | Food(y)	(4, 12)
+	14. ~Eats(Bill, f)				(9, 10) 
+	15. Die(Bill)					(6, 14)
+	16. ~Alive(Bill)				(7, 15)
+	17. Empty						(8, 16)
+Therefore, we can know that Sue eat everything.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+3. 
+- The instance of 3 colors is NOT satisfiable.
+
+- The instance of 4 coloars is satisfiable.
+
+- The above two instances tell me that graph coloring problems has limit on minimum 
+number of colors to be satisfiable.
+
+- The answer I got from Rsat is: 
+v -1 -2 -3 4 -5 -6 7 -8 -9 10 -11 -12 -13 -14 15 -16 17 -18 -19 -20 -21 22 -23 -24 25 
+-26 -27 -28 0
+which means there are four colors total, and colors for each nodes are:
+node 1 -> color 4, node 2 -> color 3, node 3 -> color 2, node 4 -> color 3, 
+node 5 -> color 1, node 6 -> color 2,   node 7 -> color 1, 
+
+- The minumim number of colors required to properly color this graph is 7.
+
+
